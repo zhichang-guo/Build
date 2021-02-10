@@ -4,6 +4,7 @@ set dir_path = $1
 set dir_name = $2
 set platform = $3
 if ($platform == 'hera') then
+    source /home/Zhichang.Guo/rcs/Load_jedi_modules.rc
     set fort_compiler = 'apps/intel/parallel_studio_xe_2020.2.108/compilers_and_libraries_2020/linux/bin/intel64/ifort'
     set netcdf_dir    = 'apps/netcdf/4.7.4/intel/18.0.5'
     set fflags        = '-r8'
