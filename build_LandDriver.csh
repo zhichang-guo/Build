@@ -5,7 +5,7 @@ set dir_name = $2
 set platform = $3
 if ($platform == 'hera') then
     set fort_compiler = 'apps/intel/parallel_studio_xe_2020.2.108/compilers_and_libraries_2020/linux/bin/intel64/ifort'
-    set netcdf_dir    = 'apps/netcdf/4.7.0/intel/18.0.5.274'
+    set netcdf_dir    = 'apps/netcdf/4.7.4/intel/18.0.5'
     set fflags        = '-r8'
 else
     set fort_compiler = 'apps/gcc-10.2.0/openmpi-4.0.4/openmpi-4.0.4/bin/mpifort'
@@ -14,13 +14,15 @@ else
 endif
 #
 set driver_git = 'https://github.com/barlage/ufs-land-driver.git'
-set driver_branch = 'feature/noahmp'
+set driver_branch = 'new_noahmp'
+#set driver_branch = 'feature/noahmp'
 #
 #set ccpp_git = 'https://github.com/HelinWei-NOAA/ccpp-physics.git'
 #set ccpp_branch = 'feature/noahmp'
 #
 set ccpp_git = 'https://github.com/barlage/ccpp-physics.git'
-set ccpp_branch = 'bug_opt_stc'
+set ccpp_branch = 'update_noahmp'
+#set ccpp_branch = 'bug_opt_stc'
 
 echo "******************************************************************"
 echo '    Command:' mkdir -p $dir_path/$dir_name 
