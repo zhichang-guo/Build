@@ -61,7 +61,6 @@ cat > user_build_config << EOF
 #===============================================================================
 #  Placeholder options for intel fortran in hera
 #===============================================================================
-
  COMPILERF90    =       /$fort_compiler
  FREESOURCE     =       #-ffree-form  -ffree-line-length-none
  F90FLAGS       =       $fflags
@@ -75,4 +74,5 @@ echo "*-----------------------------------------------------------------"
 echo '    Command:' cd $dir_path/$dir_name/ufs-land-driver
 #echo '    Command:' make
 cd $dir_path/$dir_name/ufs-land-driver
+sed -i -- 's/sfc_noahmp_drv/noahmp_sfc_drv/g' $dir_path/$dir_name/ufs-land-driver/*/Makefile
 make
