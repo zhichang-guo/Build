@@ -23,7 +23,7 @@ endif
 set package   = $1
 set directory = $2
 set platform  = $3
-set status    = 'init'
+set progress  = 'init'
 #
 if ( $package == 'fv3-bundle' ) then
     set package_git = 'https://github.com/JCSDA-internal/fv3-bundle.git'
@@ -75,7 +75,7 @@ echo '    Command:' cd $directory/$dir_src
 if ( -d $directory/$dir_src ) then
     cd $directory/$dir_src
     git pull
-    set status = 'updated'
+    set progress = 'updated'
 else
     cd $directory
     git clone $package_git
@@ -83,9 +83,10 @@ endif
 echo "*-----------------------------------------------------------------"
 echo '    Command:' cd $directory/$dir_build
 echo '    Command: build the system'
+echo $progress
 cd $directory/$dir_build
 if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) then
-    if ( $status == 'init' ) then
+    if ( $progress == 'init' ) then
         if ( $platform == 'hera' ) then
             ecbuild -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" ../$dir_start
         else
@@ -93,6 +94,7 @@ if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) 
         endif
     endif
 endif
+exit
 setenv SLURM_ACCOUNT da-cpu
 setenv SALLOC_ACCOUNT $SLURM_ACCOUNT
 setenv SBATCH_ACCOUNT $SLURM_ACCOUNT
