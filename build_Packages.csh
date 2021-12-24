@@ -55,12 +55,14 @@ mkdir -p $directory/$dir_build
 #Load JEDI modules: https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/using/jedi_environment/modules.html
 echo "******************************************************************"
 echo '    Command: Load Package Modules'
-if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) then
+if ( $package == 'fv3-bundle' || $package == 'ioda-bundle' || $package == 'soca' || $package == 'ucldasv2' ) then
     if ( $platform == 'hera' ) then
         setenv JEDI_OPT /scratch1/NCEPDEV/jcsda/jedipara/opt/modules
         module use $JEDI_OPT/modulefiles/core
         module purge
         module load jedi/intel-impi/2020.2
+        if ( $package == 'ioda-bundle' ) then
+        endif
     else if ( $platform == 'orion' ) then
         setenv JEDI_OPT /work/noaa/da/jedipara/opt/modules
         module use $JEDI_OPT/modulefiles/core
@@ -88,8 +90,16 @@ if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) 
     if ( $progress == 'init' ) then
         if ( $platform == 'hera' ) then
             ecbuild -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" ../$dir_start
-        else
+        else if ( $platform == 'orion' ) then
             ecbuild -DMPIEXEC_EXECUTABLE=/opt/slurm/bin/srun -DMPIEXEC_NUMPROC_FLAG="-n" ../$dir_start
+        endif
+    endif
+else if ( $package == 'ioda-bundle' ) then
+    if ( $progress == 'init' ) then
+        if ( $platform == 'hera' ) then
+            ecbuild -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_IODA_CONVERTERS=ON -DBUILD_PYTHON_BINDINGS=ON ../$dir_start
+        else if ( $platform == 'orion' ) then
+            ecbuild -DMPIEXEC_EXECUTABLE=/opt/slurm/bin/srun -DMPIEXEC_NUMPROC_FLAG="-n" -DBUILD_IODA_CONVERTERS=ON -DBUILD_PYTHON_BINDINGS=ON ../$dir_start
         endif
     endif
 endif
