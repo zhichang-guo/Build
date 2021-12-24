@@ -1,5 +1,12 @@
 #!/bin/csh
-# Usage: ./build_Packages.csh package directory_path directory_name platform
+################################################################################
+## Build/update a JEDI related system                                          #
+##                                                                             #
+## Usage: ./build_Packages.csh package directory_path directory_name platform  #
+##        packages: fv3-bundle/soca/ucldasv2/ioda-bundle                       #
+##        platform: hera or orion                                              #
+## Author: Zhichang Guo, email: Zhichang.Guo@noaa.gov                          #
+################################################################################
 if ( $#argv != 4) then
   echo $0 requires 4 arguments: package dir_path dir_name platform
   echo '        packages: fv3-bundle/soca/ucldasv2/ioda-bundle' 
