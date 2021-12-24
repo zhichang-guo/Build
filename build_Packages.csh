@@ -83,7 +83,6 @@ endif
 echo "*-----------------------------------------------------------------"
 echo '    Command:' cd $directory/$dir_build
 echo '    Command: build the system'
-echo $progress
 cd $directory/$dir_build
 if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) then
     if ( $progress == 'init' ) then
@@ -94,7 +93,6 @@ if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) 
         endif
     endif
 endif
-exit
 setenv SLURM_ACCOUNT da-cpu
 setenv SALLOC_ACCOUNT $SLURM_ACCOUNT
 setenv SBATCH_ACCOUNT $SLURM_ACCOUNT
