@@ -67,9 +67,9 @@ if ( $package == 'fv3-bundle' ) then
         ecbuild -DMPIEXEC_EXECUTABLE=/opt/slurm/bin/srun -DMPIEXEC_NUMPROC_FLAG="-n" ../$dir_src
     endif
 endif
-export SLURM_ACCOUNT=da-cpu
-export SALLOC_ACCOUNT=$SLURM_ACCOUNT
-export SBATCH_ACCOUNT=$SLURM_ACCOUNT
-export SLURM_QOS=debug
+setenv SLURM_ACCOUNT da-cpu
+setenv SALLOC_ACCOUNT $SLURM_ACCOUNT
+setenv SBATCH_ACCOUNT $SLURM_ACCOUNT
+setenv SLURM_QOS debug
 echo '    Command:' make -j4
 make -j4
