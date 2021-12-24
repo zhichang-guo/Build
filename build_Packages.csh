@@ -1,26 +1,29 @@
 #!/bin/csh
-################################################################################
-## Build/update a JEDI related system                                          #
-##                                                                             #
-## Usage: ./build_Packages.csh package directory_path directory_name platform  #
-##        packages: fv3-bundle/soca/ucldasv2/ioda-bundle                       #
-##        platform: hera or orion                                              #
-## Author: Zhichang Guo, email: Zhichang.Guo@noaa.gov                          #
-################################################################################
-if ( $#argv != 4) then
-  echo $0 requires 4 arguments: package dir_path dir_name platform
+############################################################
+## Build/update a JEDI related system                      #
+##                                                         #
+## Usage: ./build_Packages.csh package directory platform  #
+##        packages: fv3-bundle/soca/ucldasv2/ioda-bundle   #
+##        platform: hera or orion                          #
+## Example:                                                #
+##        ./build_Packages.csh fv3-bundle Work orion       #
+##        The script will build fv3-build under the        #
+##        directory "Work" on hera                         #
+## Author: Zhichang Guo, email: Zhichang.Guo@noaa.gov      #
+############################################################
+if ( $#argv != 3) then
+  echo $0 requires 3 arguments: package directory platform
   echo '        packages: fv3-bundle/soca/ucldasv2/ioda-bundle' 
   echo '        platform: hera or orion'
   exit
 else
-  echo $0 $1 $2 $3 $4
+  echo $0 $1 $2 $3
 endif
 
-set package  = $1
-set dir_path = $2
-set dir_name = $3
-set platform = $4
-set status   = 'init'
+set package   = $1
+set directory = $2
+set platform  = $3
+set status    = 'init'
 #
 if ( $package == 'fv3-bundle' ) then
     set package_git = 'https://github.com/JCSDA-internal/fv3-bundle.git'
@@ -46,8 +49,8 @@ endif
 #
 
 echo "******************************************************************"
-echo '    Command:' mkdir -p $dir_path/$dir_name/$dir_build
-mkdir -p $dir_path/$dir_name/$dir_build
+echo '    Command:' mkdir -p $directory/$dir_build
+mkdir -p $directory/$dir_build
 
 #Load JEDI modules: https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/using/jedi_environment/modules.html
 echo "******************************************************************"
@@ -66,21 +69,21 @@ if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) 
 endif
 module list
 echo "*-----------------------------------------------------------------"
-echo '    Command:' cd $dir_path/$dir_name
+echo '    Command:' cd $directory
 echo '    Command:' git clone $package_git
-echo '    Command:' cd $dir_path/$dir_name/$dir_src
-if ( -d $dir_path/$dir_name/$dir_src ) then
-    cd $dir_path/$dir_name/$dir_src
+echo '    Command:' cd $directory/$dir_src
+if ( -d $directory/$dir_src ) then
+    cd $directory/$dir_src
     git pull
     set status = 'updated'
 else
-    cd $dir_path/$dir_name
+    cd $directory
     git clone $package_git
 endif
 echo "*-----------------------------------------------------------------"
-echo '    Command:' cd $dir_path/$dir_name/$dir_build
+echo '    Command:' cd $directory/$dir_build
 echo '    Command: build the system'
-cd $dir_path/$dir_name/$dir_build
+cd $directory/$dir_build
 if ( $package == 'fv3-bundle' || $package == 'soca' || $package == 'ucldasv2' ) then
     if ( $status == 'init' ) then
         if ( $platform == 'hera' ) then
@@ -95,5 +98,5 @@ setenv SALLOC_ACCOUNT $SLURM_ACCOUNT
 setenv SBATCH_ACCOUNT $SLURM_ACCOUNT
 setenv SLURM_QOS debug
 echo '    Command:' make -j4
-cd $dir_path/$dir_name/$dir_build
+cd $directory/$dir_build
 make -j4
