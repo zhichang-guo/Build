@@ -1,0 +1,75 @@
+#!/bin/csh
+# Usage: ./build_Packages.csh package directory_path directory_name platform
+if ( $#argv != 4) then
+  echo $0 requires 4 arguments: package dir_path dir_name platform
+  echo '        packages: fv3-bundle or ioda-bundle' 
+  echo '        platform: hera or orion'
+  exit
+else
+  echo $0 $1 $2 $3 $4
+endif
+
+set package  = $1
+set dir_path = $2
+set dir_name = $3
+set platform = $4
+#
+if ( $package == 'fv3-bundle' ) then
+    set package_git = 'https://github.com/JCSDA-internal/fv3-bundle.git'
+    set dir_build = 'jedi_build'
+    set dir_src = 'fv3-bundle'
+else if ( $package == 'ioda-bundle' ) then
+    set package_git = 'https://github.com/jcsda-internal/ioda-bundle.git'
+    set dir_build = 'ioda_build'
+    set dir_src = 'ioda-bundle'
+endif
+#
+
+echo "******************************************************************"
+echo '    Command:' mkdir -p $dir_path/$dir_name/$dir_build
+mkdir -p $dir_path/$dir_name/$dir_build
+
+#Load JEDI modules: https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/using/jedi_environment/modules.html
+echo "******************************************************************"
+echo '    Command: Load Package Modules'
+if ( $package == 'fv3-bundle' ) then
+    if ( $platform == 'hera' ) then
+        setenv JEDI_OPT /scratch1/NCEPDEV/jcsda/jedipara/opt/modules
+        module use $JEDI_OPT/modulefiles/core
+        module purge
+        module load jedi/intel-impi/2020.2
+    else if ( $platform == 'orion' ) then
+        setenv JEDI_OPT /work/noaa/da/jedipara/opt/modules
+        module use $JEDI_OPT/modulefiles/core
+        module load jedi/intel-impi
+    endif
+endif
+module list
+echo "*-----------------------------------------------------------------"
+echo '    Command:' cd $dir_path/$dir_name
+echo '    Command:' git clone $package_git
+echo '    Command:' cd $dir_path/$dir_name/$dir_src
+if ( -d $dir_path/$dir_name/$dir_src ) then
+    cd $dir_path/$dir_name/$dir_src
+    git pull
+else
+    cd $dir_path/$dir_name
+    git clone $package_git
+endif
+echo "*-----------------------------------------------------------------"
+echo '    Command:' cd $dir_path/$dir_name/$dir_build
+echo '    Command: build the system'
+cd $dir_path/$dir_name/$dir_build
+if ( $package == 'fv3-bundle' ) then
+    if ( $platform == 'hera' ) then
+        ecbuild -DMPIEXEC_EXECUTABLE=`which srun` -DMPIEXEC_NUMPROC_FLAG="-n" ../$dir_src
+    else
+        ecbuild -DMPIEXEC_EXECUTABLE=/opt/slurm/bin/srun -DMPIEXEC_NUMPROC_FLAG="-n" ../$dir_src
+    endif
+endif
+export SLURM_ACCOUNT=da-cpu
+export SALLOC_ACCOUNT=$SLURM_ACCOUNT
+export SBATCH_ACCOUNT=$SLURM_ACCOUNT
+export SLURM_QOS=debug
+echo '    Command:' make -j4
+make -j4
